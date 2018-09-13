@@ -11,6 +11,7 @@
 extern int board[21][21];
 extern int mode;
 extern int player;
+int human;
 
 void initBoard();
 
