@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <locale.h>
 #include <wchar.h>
-#include <bits/wctype-wchar.h>
+//#include <bits/wctype-wchar.h>
 #include "interface/interface.h"
 
 int main() {

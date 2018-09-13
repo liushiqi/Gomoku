@@ -32,15 +32,31 @@ const wchar_t *whiteTerm = L"请白棋下子：";
 
 const wchar_t *rows = L"     A   B   C   D   E   F   G   H   I   J   K   L   M   N   O   P   Q   R   S\n";
 
+#ifdef WIN32
+const wchar_t *top = L"   ┏━┯━┯━┯━┯━┯━┯━┯━┯━┯━┯━┯━┯━┯━┯━┯━┯━┯━┯━┓\n";
+
+const wchar_t *middle = L"   ┠─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─┨\n";
+
+const wchar_t *ground = L"   ┗━┷━┷━┷━┷━┷━┷━┷━┷━┷━┷━┷━┷━┷━┷━┷━┷━┷━┷━┛\n\n\n\n";
+
+const wchar_t *line = L"  ";
+
+const wchar_t *chessBlack = L"●";
+
+const wchar_t *chessWhite = L"○";
+#else
 const wchar_t *top = L"   ┏━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┓\n";
 
 const wchar_t *middle = L"   ┠───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┨\n";
 
 const wchar_t *ground = L"   ┗━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┛\n\n\n\n";
 
+const wchar_t *line = L"   ";
+
 const wchar_t *chessBlack = L" ● ";
 
 const wchar_t *chessWhite = L" ○ ";
+#endif
 
 const wchar_t thick = 0x2503;
 
@@ -58,7 +74,7 @@ int lastX, lastY;
 
 void clearScreen() {
 #ifdef WIN32
-    system('cls')
+    system("cls");
 #else
     wprintf(L"\033c");
 #endif
@@ -105,7 +121,7 @@ void displayBoard() {
         else wprintf(middle);
         wprintf(L"%02d %lc", i, thick);
         for (int j = 1; j < 20; ++j) {
-            wprintf(L"%ls%lc", board[i][j] == -1 ? L"   " : board[i][j] == 0 ? chessBlack : chessWhite,
+            wprintf(L"%ls%lc", board[i][j] == -1 ? line : board[i][j] == 0 ? chessBlack : chessWhite,
                     j == 19 ? thick : thin);
         }
         wprintf(L"\n");
