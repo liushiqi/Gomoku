@@ -39,7 +39,7 @@ const wchar_t *middle = L"   ┠─┼─┼─┼─┼─┼─┼─┼─┼
 
 const wchar_t *ground = L"   ┗━┷━┷━┷━┷━┷━┷━┷━┷━┷━┷━┷━┷━┷━┷━┷━┷━┷━┷━┛\n\n\n\n";
 
-const wchar_t *line = L"  ";
+const wchar_t *nothing = L"  ";
 
 const wchar_t *chessBlack = L"●";
 
@@ -51,7 +51,7 @@ const wchar_t *middle = L"   ┠───┼───┼───┼───┼
 
 const wchar_t *ground = L"   ┗━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┛\n\n\n\n";
 
-const wchar_t *line = L"   ";
+const wchar_t *nothing = L"   ";
 
 const wchar_t *chessBlack = L" ● ";
 
@@ -96,6 +96,7 @@ void initBoard() {
 }
 
 bool setChess(int x, int y) {
+    if (x < 1 || x > 19 || y < 1 || y > 19) return false;
     if (board[x][y] != -1) return false;
     else {
         lastX = x;
@@ -121,7 +122,7 @@ void displayBoard() {
         else wprintf(middle);
         wprintf(L"%02d %lc", i, thick);
         for (int j = 1; j < 20; ++j) {
-            wprintf(L"%ls%lc", board[i][j] == -1 ? line : board[i][j] == 0 ? chessBlack : chessWhite,
+            wprintf(L"%ls%lc", board[i][j] == -1 ? nothing : board[i][j] == 0 ? chessBlack : chessWhite,
                     j == 19 ? thick : thin);
         }
         wprintf(L"\n");
