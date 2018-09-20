@@ -55,7 +55,11 @@ const wchar_t *nothing = L"   ";
 
 const wchar_t *chessBlack = L" ● ";
 
+const wchar_t *lastChessBlack = L" ◉ ";
+
 const wchar_t *chessWhite = L" ○ ";
+
+const wchar_t *lastChessWhite = L" ◎ ";
 #endif
 
 const wchar_t thick = 0x2503;
@@ -122,7 +126,11 @@ void displayBoard() {
         else wprintf(middle);
         wprintf(L"%02d %lc", i, thick);
         for (int j = 1; j < 20; ++j) {
-            wprintf(L"%ls%lc", board[i][j] == -1 ? nothing : board[i][j] == 0 ? chessBlack : chessWhite,
+            wprintf(L"%ls%lc",
+                    board[i][j] == -1 ? nothing : board[i][j] == 0 ? ((lastX == i && lastY == j) ? lastChessBlack
+                                                                                                 : chessBlack)
+                                                                   : ((lastX == i && lastY == j) ? lastChessWhite
+                                                                                                 : chessWhite),
                     j == 19 ? thick : thin);
         }
         wprintf(L"\n");
