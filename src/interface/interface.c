@@ -42,6 +42,7 @@ const wchar_t separate = 0x2500;
 int board[21][21];
 int mode;
 int player;
+int human;
 int searched[21][21];
 int dirs[4][2] = {{1, 0}, {1, 1}, {0, 1}, {-1, 1}};
 

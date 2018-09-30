@@ -23,6 +23,11 @@ extern int mode;
 extern int player;
 
 /**
+ * the number of player if is single mode.
+ */
+extern int human;
+
+/**
  * The process of initializing the board, will require for the type of playing too.
  */
 void initBoard();
