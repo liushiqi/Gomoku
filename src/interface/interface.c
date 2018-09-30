@@ -15,8 +15,8 @@
 const wchar_t *header = L"=================五子棋=================\n\n\n\n";
 
 const wchar_t *request = L"=================五子棋=================\n\n\n\n"
-                         "欢迎使用五子棋交互程序，请选择玩家数量。\n"
-                         "1：单人                    2：多人\n";
+                         L"欢迎使用五子棋交互程序，请选择玩家数量。\n"
+                         L"1：单人                    2：多人\n";
 
 const wchar_t *rows = L"   A B C D E F G H I J K L M N O P Q R S\n";
 
@@ -26,6 +26,8 @@ const wchar_t *whiteTerm = L"请白棋下子：";
 
 const wchar_t chessBlack = 0x2b24;
 const wchar_t chessWhite = 0x25ef;
+const wchar_t lastChessBlack = L'◉';
+const wchar_t lastChessWhite = L'◎';
 const wchar_t leftTop = 0x250c;
 const wchar_t rightTop = 0x2510;
 const wchar_t leftGround = 0x2514;
@@ -60,12 +62,12 @@ void initBoard() {
     player = 0;
 }
 
-bool setChess(int x, int y) {
-    if (board[x][y] != 0) return false;
+int setChess(int x, int y) {
+    if (board[x][y] != 0) return 1;
     else {
         board[x][y] = player;
         player = player == 1 ? 2 : 1;
-        return true;
+        return 0;
     }
 }
 
