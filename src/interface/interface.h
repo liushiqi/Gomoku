@@ -8,17 +8,17 @@
 #include <string.h>
 
 /**
- * The chess on the board.
+ * The chess on the board, -1 is no chess, 0 is black, 1 is white.
  */
 extern int board[21][21];
 
 /**
- * The mode of playing, 1 is single player, 2 is multi player.
+ * The mode of playing, 0 is single player, 1 is multi player.
  */
 extern int mode;
 
 /**
- * the player current should put chess, 1 is black, 2 is white.
+ * the player current should put chess, 0 is black, 1 is white.
  */
 extern int player;
 
