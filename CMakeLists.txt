@@ -20,6 +20,10 @@ if (NOT ${THREADS_EXIST})
     target_link_libraries(gomoku tinycthread)
 endif ()
 
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    target_link_libraries(gomoku pthread)
+endif ()
+
 # expat
 option(BUILD_doc "" OFF)
 option(BUILD_tests "" OFF)
@@ -42,10 +46,6 @@ target_link_libraries(gomoku ${Log4C_LIBRARIES})
 target_include_directories(gomoku PUBLIC ${Log4C_INCLUDE_DIRS})
 
 set_property(TARGET gomoku PROPERTY C_STANDARD 11)
-
-if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
-    set(CMAKE_C_FLAGS -DWITHOUT_LOG4C)
-endif ()
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
