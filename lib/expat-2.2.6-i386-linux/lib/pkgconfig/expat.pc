@@ -1,0 +1,11 @@
+prefix=/home/liu/libraries/expat-2.2.6/expat-2.2.6-i386-linux
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: expat
+Version: 2.2.6
+Description: expat XML parser
+URL: http://www.libexpat.org
+Libs: -L${libdir} -lexpat
+Cflags: -I${includedir}
