@@ -1,6 +1,6 @@
-[submodule "lib/libexpat"]
-	path = lib/libexpat
-	url = https://github.com/libexpat/libexpat.git
-[submodule "lib/tinycthread"]
+[submodule "tinycthread"]
 	path = lib/tinycthread
 	url = https://github.com/tinycthread/tinycthread.git
+[submodule "libexpat"]
+	path = lib/libexpat
+	url = https://github.com/libexpat/libexpat.git
