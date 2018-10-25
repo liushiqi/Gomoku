@@ -2,7 +2,7 @@
 // Created by liu on 18-10-13.
 //
 
-#include <threads.h>
+#include "utils/thread.h"
 #include <locale.h>
 #include "utils/logger.h"
 #include "interface/screen.h"

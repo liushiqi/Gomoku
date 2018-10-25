@@ -34,7 +34,7 @@ const wchar_t *wrongInput = L"无效输入，请重新输入。\n";
 const wchar_t *forbidden = L"该位置为禁手位，请重新输入。\n";
 
 const wchar_t black = L'●';
-const wchar_t lastBlack = L'◍';
+const wchar_t lastBlack = L'◉';
 const wchar_t white = L'○';
 const wchar_t lastWhite = L'◎';
 const wchar_t leftTop = L'┏';

@@ -5,54 +5,77 @@ set(CMAKE_C_STANDARD 11)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-    #set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib ${CMAKE_PREFIX_PATH})
-elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    set(CMAKE_PREFIX_PATH
-            ${CMAKE_CURRENT_SOURCE_DIR}/lib/log4c-1.2.4-${CMAKE_HOST_SYSTEM_PROCESSOR}-linux
-            ${CMAKE_CURRENT_SOURCE_DIR}/lib/expat-2.2.6-${CMAKE_HOST_SYSTEM_PROCESSOR}-linux)
-endif ()
-
-find_package(log4c REQUIRED)
-
-find_package(EXPAT REQUIRED)
-
 add_executable(gomoku
         src/main.c
         src/interface/board.c
         src/interface/screen.c
-        src/utils/logger.c "src/utils/values.h" src/utils/values.c)
+        src/utils/logger.c
+        src/utils/values.c)
 
-target_link_libraries(gomoku ${log4c_LIBRARIES})
+# threads.h
+include(CheckIncludeFile)
+check_include_file(threads.h THREADS_EXIST)
+if (NOT ${THREADS_EXIST})
+    add_subdirectory(lib/tinycthread)
+    target_link_libraries(gomoku tinycthread)
+endif ()
 
-target_include_directories(gomoku PUBLIC ${log4c_INCLUDE_DIRS})
+# expat
+option(BUILD_doc "" OFF)
+option(BUILD_tests "" OFF)
+add_subdirectory(lib/libexpat/expat)
+target_link_libraries(gomoku expat)
 
-target_link_libraries(gomoku ${EXPAT_LIBRARIES})
+# log4c
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    if (${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "AMD64")
+        set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib/log4c-1.2.4-x86_64-w64-mingw32 ${CMAKE_PREFIX_PATH})
+    else ()
+        set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib/log4c-1.2.4-i686-w64-mingw32 ${CMAKE_PREFIX_PATH})
+    endif ()
+elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    set(CMAKE_PREFIX_PATH
+            ${CMAKE_CURRENT_SOURCE_DIR}/lib/log4c-1.2.4-${CMAKE_HOST_SYSTEM_PROCESSOR}-linux-gnu)
+endif ()
+find_package(Log4C 1.2.4 REQUIRED)
+target_link_libraries(gomoku ${Log4C_LIBRARIES})
+target_include_directories(gomoku PUBLIC ${Log4C_INCLUDE_DIRS})
 
-target_include_directories(gomoku PUBLIC ${EXPAT_INCLUDE_DIRS})
+set_property(TARGET gomoku PROPERTY C_STANDARD 11)
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
     set(CMAKE_C_FLAGS -DWITHOUT_LOG4C)
 endif ()
 
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    target_link_libraries(gomoku pthread)
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+        add_custom_command(OUTPUT log4crc
+                DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/log4crc-debug
+                COMMAND copy ${CMAKE_CURRENT_SOURCE_DIR}/log4crc-debug ${CMAKE_CURRENT_BINARY_DIR}/log4crc
+                COMMAND if not exist ${CMAKE_CURRENT_BINARY_DIR}/log md ${CMAKE_CURRENT_BINARY_DIR}/log
+                COMMENT "Copying the log4crc file.")
+    elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+        add_custom_command(OUTPUT log4crc
+                DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/log4crc-debug
+                COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/log4crc-debug ${CMAKE_CURRENT_BINARY_DIR}/log4crc
+                COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/log
+                COMMENT "Copying the log4crc file.")
+    endif ()
+elseif (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+        add_custom_command(OUTPUT log4crc
+                DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/log4crc-release
+                COMMAND copy ${CMAKE_CURRENT_SOURCE_DIR}/log4crc-release ${CMAKE_CURRENT_BINARY_DIR}/log4crc
+                COMMAND if not exist ${CMAKE_CURRENT_BINARY_DIR}/log md ${CMAKE_CURRENT_BINARY_DIR}/log
+                COMMENT "Copying the log4crc file.")
+    elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+        add_custom_command(OUTPUT log4crc
+                DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/log4crc-release
+                COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/log4crc-release ${CMAKE_CURRENT_BINARY_DIR}/log4crc
+                COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/log
+                COMMENT "Copying the log4crc file.")
+    endif ()
 endif ()
 
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-    add_custom_command(TARGET gomoku POST_BUILD
-            COMMAND copy ${CMAKE_CURRENT_SOURCE_DIR}/log4crc ${CMAKE_CURRENT_BINARY_DIR}
-            COMMAND if not exist ${CMAKE_CURRENT_BINARY_DIR}/log md ${CMAKE_CURRENT_BINARY_DIR}/log
-            DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/log4crc
-            BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/log4crc
-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-            COMMENT "Copying the log4crc file.")
-elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    add_custom_command(TARGET gomoku POST_BUILD
-            COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/log4crc ${CMAKE_CURRENT_BINARY_DIR}
-            COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/log
-            DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/log4crc
-            BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/log4crc
-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-            COMMENT "Copying the log4crc file.")
-endif ()
+add_custom_target(build ALL
+        DEPENDS log4crc gomoku)

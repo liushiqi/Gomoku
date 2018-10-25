@@ -132,19 +132,25 @@ int duUserInput() {
     Pos pos = {-1, -1};
     if (gameType || getPlayer() == player) {
         wprintf(direct);
-        while (requestLine(player - 1 ? blackTerm : whiteTerm, line, 1000) != 0) {
+        while (requestLine(player - 1 ? blackTerm : whiteTerm, line, 1000)) {
             trace("Input string is %ls", line);
-            if (!wcscmp(line, L"quit\n")) {
+            if (!wcscmp(line, L"quit")) {
                 return -1;
             }
             if (iswalpha((wint_t) line[0])) {
+                wchar_t *ptr;
                 pos.y = towlower((wint_t) line[0]) - 'a';
-                pos.x = (int) wcstol(line + 1, NULL, 10) - 1;
+                pos.x = (int) wcstol(line + 1, &ptr, 10) - 1;
+                if (ptr == line + 1) {
+                    warn("Wrong input is %ls", line);
+                    wprintf(wrongInput);
+                    continue;
+                }
             } else {
-                warn("Wrong input %s", line);
+                warn("Wrong input %ls", line);
                 wprintf(wrongInput);
                 continue;
-            }+
+            }
             switch (putChess(pos)) {
                 case 0:
                     return 0;
@@ -175,7 +181,7 @@ int requestInt(const wchar_t *request, int *value) {
     wchar_t line[1000];
     wprintf(request);
     while ((result = fgetws(line, 1000, stdin)) != NULL && !iswdigit((wint_t) line[0])) {
-        warn("Wrong input %s", line);
+        warn("Wrong input %ls", line);
         wprintf(wrongInput);
         wprintf(request);
     }
@@ -189,6 +195,10 @@ int requestInt(const wchar_t *request, int *value) {
 
 int requestLine(const wchar_t *request, wchar_t *value, int count) {
     wprintf(request);
-    if (fgetws(value, count, stdin) != NULL) return 1;
-    else return 0;
+    if (fgetws(value, count, stdin) == NULL) return 0;
+    else {
+        if (value[wcslen(value) - 1] == '\n')
+            value[wcslen(value) - 1] = 0;
+        return 1;
+    }
 }

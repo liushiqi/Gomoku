@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE log4c SYSTEM "">
+
+<log4c>
+    <config>
+        <bufsize>0</bufsize>
+        <debug level="0"/>
+        <nocleanup>0</nocleanup>
+    </config>
+
+    <!-- category ====================================== -->
+    <category name="gomoku" priority="trace" appender="gomoku"/>
+
+    <!-- appender ====================================== -->
+	<appender name="gomoku" type="rollingfile" logdir="./log" prefix="gomoku.log" layout="detailed" rollingpolicy="rollingpolicy" />
+    <rollingpolicy name="rollingpolicy" type="sizewin" maxsize="1024000" maxnum="1000" />
+
+    <!-- layouts ======================================= -->
+    <layout name="detailed" type="detailed"/>
+</log4c>
