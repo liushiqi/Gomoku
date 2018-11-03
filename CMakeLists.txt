@@ -14,13 +14,17 @@ add_executable(gomoku
 
 # threads.h
 include(CheckIncludeFile)
-check_include_file(threads.h THREADS_EXIST)
+if (MSVC)
+    check_include_file(thr/threads.h THREADS_EXIST)
+else ()
+    check_include_file(threads.h THREADS_EXIST)
+endif ()
 if (NOT ${THREADS_EXIST})
     add_subdirectory(lib/tinycthread)
     target_link_libraries(gomoku tinycthread)
+    target_include_directories(gomoku lib/tinycthread/source)
 endif ()
-
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if (UNIX)
     target_link_libraries(gomoku pthread)
 endif ()
 

@@ -15,6 +15,8 @@ extern const wchar_t *numberRequest;
 
 extern const wchar_t *header;
 
+extern const wchar_t *foot;
+
 extern const wchar_t *direct;
 
 extern const wchar_t *blackTerm;
@@ -30,6 +32,8 @@ extern const wchar_t *quit;
 extern const wchar_t *wrongInput;
 
 extern const wchar_t *forbidden;
+
+extern const wchar_t *oldest;
 
 extern const wchar_t black;
 extern const wchar_t lastBlack;

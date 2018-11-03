@@ -7,7 +7,7 @@
 
 #if defined(__STDC_NO_THREADS__) || (__STDC_VERSION__ <= 199901L)
 
-#include <tinycthread>
+#include <tinycthread.h>
 
 #elseif defined(MSVC)
 

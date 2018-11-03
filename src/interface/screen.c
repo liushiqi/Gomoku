@@ -73,7 +73,7 @@ void initScreen() {
 void refresh() {
     clear();
     wprintf(header);
-    for (int i = 0; i < BOARD_SIZE; ++i) {
+    for (int i = BOARD_SIZE - 1; i >= 0; --i) {
         wprintf(L"%02d  ", i + 1);
         for (int j = 0; j < BOARD_SIZE; ++j) {
             Pos pos = {i, j};
@@ -87,9 +87,9 @@ void refresh() {
                     else putwchar(white);
                     break;
                 case 0:
-                    if (pos.x == 0)
+                    if (pos.x == BOARD_SIZE - 1)
                         putwchar(pos.y == 0 ? leftTop : pos.y == BOARD_SIZE - 1 ? rightTop : top);
-                    else if (pos.x == BOARD_SIZE - 1)
+                    else if (pos.x == 0)
                         putwchar(pos.y == 0 ? leftGround : pos.y == BOARD_SIZE - 1 ? rightGround : ground);
                     else
                         putwchar(pos.y == 0 ? left : pos.y == BOARD_SIZE - 1 ? right : middle);
@@ -100,6 +100,7 @@ void refresh() {
         }
         putwchar('\n');
     }
+    wprintf(foot);
 }
 
 int loop(void *ptr) {
@@ -111,9 +112,11 @@ int loop(void *ptr) {
             case 0:
                 continue;
             case 1: info("Black win!!!")
+                refresh();
                 wprintf(blackWin);
                 return 0;
             case 2: info("White win!!!")
+                refresh();
                 wprintf(whiteWin);
                 return 0;
             case -1: info("Program quited with no one wins.")
@@ -134,8 +137,11 @@ int duUserInput() {
         wprintf(direct);
         while (requestLine(player - 1 ? blackTerm : whiteTerm, line, 1000)) {
             trace("Input string is %ls", line);
-            if (!wcscmp(line, L"quit")) {
-                return -1;
+            if (!wcscmp(line, L"quit")) return -1;
+            if (!wcscmp(line, L"undo")) {
+                if (undo()) return 0;
+                else wprintf(oldest);
+                continue;
             }
             if (iswalpha((wint_t) line[0])) {
                 wchar_t *ptr;

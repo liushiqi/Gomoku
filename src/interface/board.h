@@ -12,6 +12,22 @@ typedef struct PosStructure {
 } Pos;
 
 /**
+ * Add two pos together.
+ * @param pos1 The first pos.
+ * @param pos2 The second pos.
+ * @return The added pos.
+ */
+Pos posAdd(Pos pos1, Pos pos2);
+
+/**
+ * Subtract two pos.
+ * @param pos1 The minuend pos.
+ * @param pos2 The subtrahend pos.
+ * @return The subtracted pos.
+ */
+Pos posSubtract(Pos pos1, Pos pos2);
+
+/**
  * Detect whether the given two pos are equal.
  * @param pos1 The first pos.
  * @param pos2 The second pos.
@@ -47,7 +63,7 @@ void initBoard();
 /**
  * Put a chess in the given position.
  * @param pos the position to set chess
- * @return 0 if put succeed, 1 if black win, 2 if white win, -1 if is a forbidden place， -2 if it is invalid.
+ * @return 0 if put succeed, 1 if black win, 2 if white win, -1 if is a forbidden place, -2 if it is invalid.
  */
 int putChess(Pos pos);
 
@@ -58,7 +74,7 @@ void skip();
 
 /**
  * Undo putting the last chess.
- * @return 0 if failed, otherwise 1..
+ * @return 0 if failed, otherwise 1.
  */
 int undo();
 

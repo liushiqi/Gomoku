@@ -19,6 +19,7 @@ int main() {
     info("game begin!");
     if (thrd_create(&game, loop, NULL) != thrd_success) {
         error("Thread create failed.")
+        return 1;
     }
     thrd_join(game, &game_return_code);
     info("Game end.")
