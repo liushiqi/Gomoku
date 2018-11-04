@@ -3,8 +3,6 @@ project(gomoku C)
 
 set(CMAKE_C_STANDARD 11)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
 add_executable(gomoku
         src/main.c
         src/interface/board.c
@@ -35,19 +33,9 @@ add_subdirectory(lib/libexpat/expat)
 target_link_libraries(gomoku expat)
 
 # log4c
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-    if (${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "AMD64")
-        set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib/log4c-1.2.4-x86_64-w64-mingw32 ${CMAKE_PREFIX_PATH})
-    else ()
-        set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib/log4c-1.2.4-i686-w64-mingw32 ${CMAKE_PREFIX_PATH})
-    endif ()
-elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    set(CMAKE_PREFIX_PATH
-            ${CMAKE_CURRENT_SOURCE_DIR}/lib/log4c-1.2.4-${CMAKE_HOST_SYSTEM_PROCESSOR}-linux-gnu)
-endif ()
-find_package(Log4C 1.2.4 REQUIRED)
-target_link_libraries(gomoku ${Log4C_LIBRARIES})
-target_include_directories(gomoku PUBLIC ${Log4C_INCLUDE_DIRS})
+add_subdirectory(lib/log4c)
+target_link_libraries(gomoku log4c)
+target_include_directories(gomoku PUBLIC lib/log4c/src)
 
 set_property(TARGET gomoku PROPERTY C_STANDARD 11)
 
