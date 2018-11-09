@@ -2,15 +2,14 @@
 // Created by liu on 18-10-17.
 //
 
-#include <locale.h>
 #include <string.h>
 #include <wchar.h>
 #include <wctype.h>
+#include <utils/values.h>
+#include <signals.h>
+#include <utils/logger.h>
 #include <stdlib.h>
 #include "screen.h"
-#include "board.h"
-#include "../utils/logger.h"
-#include "../utils/values.h"
 
 /** 0 if is single player, 1 if is multi player. */
 int gameType;
@@ -45,25 +44,33 @@ void initScreen() {
     int errorCode;
     clear();
     wprintf(numberOfPlayersRequest);
-    while ((errorCode = requestInt(numberRequest, &gameType)) != 0 && (gameType != 1 && gameType != 2)) {
-        warn("Wrong input %d", gameType);
-        wprintf(wrongInput);
-    }
-    if (errorCode == -1) {
-        warn("Exited unexpectedly.")
-        exit(0);
+    while ((errorCode = requestInt(numberRequest, &gameType)) > -1 && gameType != 1 && gameType != 2) {
+        if (getIntSignal()) {
+            setIntSignal(0);
+            wprintf(L"\n");
+        } else if (errorCode == 0) {
+            warn("Exited unexpectedly.")
+            exit(0);
+        } else {
+            warn("Wrong input %d", gameType);
+            wprintf(wrongInput);
+        }
     }
     --gameType;
     info("Game mode is %s player.", gameType ? "single" : "multi")
     if (!gameType) {
         wprintf(typeOfChessRequest);
-        while ((errorCode = requestInt(numberRequest, &player)) != 0 && (player != 1 && player != 2)) {
-            warn("Wrong input %d", player);
-            wprintf(wrongInput);
-        }
-        if (errorCode == -1) {
-            warn("Exited unexpectedly.")
-            exit(0);
+        while ((errorCode = requestInt(numberRequest, &player)) > -1 && (player != 1 && player != 2)) {
+            if (getIntSignal()) {
+                setIntSignal(0);
+                wprintf(L"\n");
+            } else if (errorCode == 0) {
+                warn("Exited unexpectedly.")
+                exit(0);
+            } else {
+                warn("Wrong input %d", gameType);
+                wprintf(wrongInput);
+            }
         }
         info("player chose %s.", player - 1 ? "black" : "white")
     }
@@ -134,8 +141,17 @@ int duUserInput() {
     wchar_t line[1000];
     Pos pos = {-1, -1};
     if (gameType || getPlayer() == player) {
+        int errorCode;
         wprintf(direct);
-        while (requestLine(player - 1 ? blackTerm : whiteTerm, line, 1000)) {
+        while ((errorCode = requestLine(player - 1 ? blackTerm : whiteTerm, line, 1000)) > -1) {
+            if (getIntSignal()) {
+                setIntSignal(0);
+                wprintf(L"\n");
+                continue;
+            } else if (errorCode == 0) {
+                warn("Exited unexpectedly.")
+                return -1;
+            }
             trace("Input string is %ls", line);
             if (!wcscmp(line, L"quit")) return -1;
             if (!wcscmp(line, L"undo")) {
@@ -192,7 +208,6 @@ int requestInt(const wchar_t *request, int *value) {
         wprintf(request);
     }
     if (result == NULL) {
-        info("EOF found.")
         return 0;
     }
     *value = (int) wcstol(line, NULL, 10);
@@ -201,8 +216,9 @@ int requestInt(const wchar_t *request, int *value) {
 
 int requestLine(const wchar_t *request, wchar_t *value, int count) {
     wprintf(request);
-    if (fgetws(value, count, stdin) == NULL) return 0;
-    else {
+    if (fgetws(value, count, stdin) == NULL) {
+        return 0;
+    } else {
         if (value[wcslen(value) - 1] == '\n')
             value[wcslen(value) - 1] = 0;
         return 1;
