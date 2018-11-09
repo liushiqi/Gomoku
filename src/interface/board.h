@@ -8,7 +8,7 @@
 #define BOARD_SIZE 15
 
 typedef struct PosStructure {
-    int x, y;
+  int x, y;
 } Pos;
 
 /**

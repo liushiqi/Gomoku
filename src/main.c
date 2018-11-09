@@ -13,23 +13,23 @@
 thrd_t game;
 
 int main() {
-    setlocale(LC_ALL, "");
-    int game_return_code;
-    initSignal();
-    initLogger();
-    initScreen();
-    initBoard();
-    info("game begin!");
-    if (thrd_create(&game, loop, NULL) != thrd_success) {
-        error("Thread create failed.")
-        return 1;
-    }
-    sigset_t mask;
-    sigaddset(&mask, SIGINT);
-    pthread_sigmask(SIG_BLOCK, &mask, NULL);
-    thrd_join(game, &game_return_code);
-    info("Game end.")
-    log4c_fini();
-    signalOnExit();
-    return game_return_code;
+  setlocale(LC_ALL, "");
+  int game_return_code;
+  initSignal();
+  initLogger();
+  initScreen();
+  initBoard();
+  info("game begin!");
+  if (thrd_create(&game, loop, NULL) != thrd_success) {
+    error("Thread create failed.")
+    return 1;
+  }
+  sigset_t mask;
+  sigaddset(&mask, SIGINT);
+  pthread_sigmask(SIG_BLOCK, &mask, NULL);
+  thrd_join(game, &game_return_code);
+  info("Game end.")
+  log4c_fini();
+  signalOnExit();
+  return game_return_code;
 }

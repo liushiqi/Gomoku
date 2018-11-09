@@ -22,7 +22,7 @@ void clear();
  * The game loop
  * @return 0 if succeed.
  */
-int loop(void*);
+int loop(void *);
 
 /**
  * Reprint the screen.
