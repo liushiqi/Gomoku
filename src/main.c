@@ -8,7 +8,7 @@
 #include <interface/screen.h>
 #include <signal.h>
 #include "utils/thread.h"
-#include "signals.h"
+#include "utils/signals.h"
 
 thrd_t game;
 

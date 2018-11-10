@@ -7,14 +7,12 @@
 
 #if defined(__STDC_NO_THREADS__) || (__STDC_VERSION__ <= 199901L)
 
+#include <pthread.h>
 #include <tinycthread.h>
-
-#elseif defined(MSVC)
-
-#include <thr/threads.h>
 
 #else
 
+#include <pthread.h>
 #include <threads.h>
 
 #endif

@@ -6,7 +6,7 @@
 #include <wchar.h>
 #include <wctype.h>
 #include <utils/values.h>
-#include <signals.h>
+#include <utils/signals.h>
 #include <utils/logger.h>
 #include <stdlib.h>
 #include "screen.h"

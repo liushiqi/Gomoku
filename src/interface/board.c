@@ -3,9 +3,14 @@
 //
 
 #include <utils/logger.h>
+#include <utils/thread.h>
+#include <pthread.h>
+#include <string.h>
 #include "board.h"
+#include "boardHelper.h"
 
 int board[BOARD_SIZE][BOARD_SIZE];
+pthread_rwlock_t boardMutex;
 int currentPlayer;
 Pos historyStack[BOARD_SIZE * BOARD_SIZE + 10];
 int stackTop;
@@ -24,35 +29,7 @@ const char *empty = "empty";
  */
 int isInvalidPos(Pos pos);
 
-/**
- * Get the max number of living chess in the given direction.
- * @param point The point to check.
- * @param direction The direction to check.
- * @return 1 if like XO@OX
- *         2 if like XO@@OX
- *         3X if like XO@@@OX or XO@@O@X, 30 is XO@L@OX, 31 is XOL@@OX.
- *         4X if like XO@@@@X or X@@@O@X or X@@O@@X
- *             40 if forward equal backward, 41 otherwise.
- *         5 if @@@@@, six or more if @@@@@@...,
- *         where X is any non-black chess, O is the place black could place, @
- * is black chess, L is where black last place.
- */
-int searchChessInOneDirection(Pos point, Pos direction,
-                              int (*getChessFunc)(Pos));
-
 const char *playerToStr(int player);
-
-/**
- * Get the message about whether someone wins now.
- * @return 0 if nobody win, 1 if black win, 2 if white win, -1 if forbidden.
- */
-int isWin();
-
-/**
- * Whether the last chess is be put at forbidden place.
- * @return 0 if not forbidden, 1 otherwise.
- */
-int isForbidden(Pos pos);
 
 Pos posAdd(Pos pos1, Pos pos2) {
   Pos result = {pos1.x + pos2.x, pos1.y + pos2.y};
@@ -71,7 +48,14 @@ int posCmp(Pos pos1, Pos pos2) {
     return 1;
 }
 
-int getChess(Pos pos) { return board[pos.x][pos.y] + 1; }
+int getChess(Pos pos) {
+  pthread_rwlock_rdlock(&boardMutex);
+  int ret = board[pos.x][pos.y] + 1;
+  pthread_rwlock_unlock(&boardMutex);
+  return ret;
+}
+
+int getChessHelper(Pos pos, int _, va_list __) { return getChess(pos); }
 
 int getPlayer() { return currentPlayer + 1; }
 
@@ -81,28 +65,25 @@ void initBoard() {
   memset(board, -1, sizeof(board));
   currentPlayer = 0;
   stackTop = -1;
+  pthread_rwlock_init(&boardMutex, NULL);
   info("Board initialized.");
 }
 
 int putChess(Pos pos) {
   if (isInvalidPos(pos)) {
-    warn("A invalid value is given, which is (%d, %d).", pos.x,
-         pos.y)
+    warn("A invalid value is given, which is (%d, %d).", pos.x, pos.y)
     return -2;
   }
   if (board[pos.x][pos.y] != -1) {
-    warn(
-        "A %s chess wants to put at (%d, %d), but a %s chess is already there.",
-        playerToStr(currentPlayer), pos.x, pos.y,
-        playerToStr(board[pos.x][pos.y]))
+    warn("A %s chess wants to put at (%d, %d), but a %s chess is already there.",
+         playerToStr(currentPlayer), pos.x, pos.y, playerToStr(board[pos.x][pos.y]))
     return -2;
   } else {
     board[pos.x][pos.y] = currentPlayer;
     currentPlayer = !currentPlayer;
     historyStack[++stackTop] = pos;
-    debug("A %s chess is put at position (%d, %d)", playerToStr(currentPlayer),
-          pos.x, pos.y)
-    return isWin();
+    debug("A %s chess is put at position (%d, %d)", playerToStr(currentPlayer), pos.x, pos.y)
+    return isWin(getChessHelper, 0);
   }
 }
 
@@ -127,55 +108,6 @@ int undo() {
   currentPlayer = !currentPlayer;
   --stackTop;
   return 1;
-}
-
-int isWin() {
-  int result;
-  for (int i = 0; i < 4; ++i) {
-    if ((result = searchChessInOneDirection(historyStack[stackTop],
-                                            directions[i], getChess)) >= 5)
-      return !currentPlayer && result > 5 ? -1 : currentPlayer + 1;
-  }
-  return 0;
-}
-
-int searchChessInOneDirection(Pos point, Pos direction,
-                              int (*getChessFunc)(Pos)) {
-  Pos current = posAdd(point, direction);
-  int blank = 0, forwardChess = 1;
-  for (int i = 0; i < 4; ++i) {
-    if (isInvalidPos(current))
-      break;
-    else if (getChessFunc(current) == -1) {
-      if (blank <= 1) {
-        ++blank;
-      } else
-        break;
-    } else if (getChessFunc(current) != currentPlayer) {
-    } else {
-      ++forwardChess;
-    }
-  }
-  return 0;
-}
-
-int isForbidden(Pos pos) {
-  int three = 0, four = 0, halfThree = 0, halfFour = 0;
-  for (int i = 0; i < 8; ++i) {
-    switch (searchChessInOneDirection(historyStack[stackTop], directions[i],
-                                      getChess)) {
-      case 30:++halfThree;
-        break;
-      case 31:++three;
-        break;
-      case 40:++halfFour;
-        break;
-      case 41:++four;
-        break;
-      default:break;
-    }
-  }
-  return (three + halfThree / 2) >= 2 || (four + halfFour / 2) >= 2;
 }
 
 const char *playerToStr(int player) {

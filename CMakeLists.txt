@@ -8,7 +8,7 @@ add_executable(gomoku
         src/interface/board.c
         src/interface/screen.c
         src/utils/logger.c
-        src/utils/values.c src/signals.h src/signals.c)
+        src/utils/values.c src/utils/signals.h src/utils/signals.c src/interface/boardHelper.c src/interface/boardHelper.h)
 target_include_directories(gomoku PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 # threads.h

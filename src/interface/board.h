@@ -7,6 +7,9 @@
 
 #define BOARD_SIZE 15
 
+/**
+ * Indicate a point.
+ */
 typedef struct PosStructure {
   int x, y;
 } Pos;

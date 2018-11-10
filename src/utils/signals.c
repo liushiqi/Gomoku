@@ -9,34 +9,34 @@
 #include "signals.h"
 
 int intSignal;
-mtx_t intSignalMutex;
+pthread_rwlock_t intSignalMutex;
 
 int getIntSignal() {
-  mtx_lock(&intSignalMutex);
+  pthread_rwlock_rdlock(&intSignalMutex);
   int sig = intSignal;
-  mtx_unlock(&intSignalMutex);
+  pthread_rwlock_unlock(&intSignalMutex);
   return sig;
 }
 
 void setIntSignal(int signal) {
-  mtx_lock(&intSignalMutex);
+  pthread_rwlock_wrlock(&intSignalMutex);
   intSignal = signal;
-  mtx_unlock(&intSignalMutex);
+  pthread_rwlock_unlock(&intSignalMutex);
 }
 
 void initSignal() {
   struct sigaction intAction = {.sa_handler = sigintHandler};
   sigaction(SIGINT, &intAction, 0);
-  mtx_init(&intSignalMutex, mtx_recursive | mtx_timed);
+  pthread_rwlock_init(&intSignalMutex, NULL);
 }
 
 void sigintHandler(num) {
   debug("sigint received.")
-  mtx_lock(&intSignalMutex);
+  pthread_rwlock_wrlock(&intSignalMutex);
   intSignal = 1;
-  mtx_unlock(&intSignalMutex);
+  pthread_rwlock_unlock(&intSignalMutex);
 }
 
 void signalOnExit() {
-  mtx_destroy(&intSignalMutex);
+  pthread_rwlock_destroy(&intSignalMutex);
 }
