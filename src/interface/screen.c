@@ -12,10 +12,10 @@
 #include "screen.h"
 
 /** 0 if is single player, 1 if is multi player. */
-int gameType;
+static int gameType;
 
 /** 1 is black, 2 is white. */
-int player;
+static int player;
 
 /**
  * Request a int for the given request from standard input.
@@ -38,9 +38,9 @@ int requestLine(const wchar_t *request, wchar_t *value, int count);
  * Get the input from either standard input or the AI calc result and put a chess.
  * @return 0 if succeed, 1 if black win, 2 if white win, -1 if interrupted.
  */
-int duUserInput();
+int duUserInput(void);
 
-void initScreen() {
+void initScreen(void) {
   int errorCode;
   clear();
   wprintf(numberOfPlayersRequest);
@@ -153,14 +153,13 @@ int duUserInput() {
       }
       trace("Input string is %ls", line);
       if (!wcscmp(line, L"quit")) return -1;
-      if (!wcscmp(line, L"undo")) {
+      else if (!wcscmp(line, L"undo")) {
         if (undo()) return 0;
         else wprintf(oldest);
         continue;
-      }
-      if (iswalpha((wint_t) line[0])) {
+      } else if (iswalpha((wint_t) line[0])) {
         wchar_t *ptr;
-        pos.y = towlower((wint_t) line[0]) - 'a';
+        pos.y = (wchar_t) towlower((wint_t) line[0]) - 'a';
         pos.x = (int) wcstol(line + 1, &ptr, 10) - 1;
         if (ptr == line + 1) {
           warn("Wrong input is %ls", line);
@@ -184,7 +183,7 @@ int duUserInput() {
           break;
       }
     }
-    return -1;
+    return -2;
   } else {
     // TODO AI input
     skip();

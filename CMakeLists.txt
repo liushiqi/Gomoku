@@ -7,9 +7,12 @@ add_executable(gomoku
         src/main.c
         src/interface/board.c
         src/interface/screen.c
+        src/interface/detector.c
         src/utils/logger.c
-        src/utils/values.c src/utils/signals.h src/utils/signals.c src/interface/boardHelper.c src/interface/boardHelper.h)
+        src/utils/values.c
+        src/utils/signals.c)
 target_include_directories(gomoku PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_compile_options(gomoku PRIVATE -Wall -Wextra -Wpedantic)
 
 # threads.h
 include(CheckIncludeFile)
@@ -47,22 +50,4 @@ elseif (${CMAKE_BUILD_TYPE} STREQUAL "Release")
     set(log_priority warn)
 endif ()
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/log4crc.in
-        ${CMAKE_CURRENT_SOURCE_DIR}/log4crc)
-
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-    add_custom_command(OUTPUT log4crc
-            DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/log4crc
-            COMMAND copy ${CMAKE_CURRENT_SOURCE_DIR}/log4crc ${CMAKE_CURRENT_BINARY_DIR}/log4crc
-            COMMAND if not exist ${CMAKE_CURRENT_BINARY_DIR}/log md ${CMAKE_CURRENT_BINARY_DIR}/log
-            COMMENT "Copying the log4crc file.")
-elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    add_custom_command(OUTPUT log4crc
-            DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/log4crc
-            COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/log4crc ${CMAKE_CURRENT_BINARY_DIR}/log4crc
-            COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/log
-            COMMENT "Copying the log4crc file.")
-endif ()
-
-add_custom_target(build ALL
-        DEPENDS log4crc gomoku)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/log4crc.in log4crc)

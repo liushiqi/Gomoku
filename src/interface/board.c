@@ -7,20 +7,17 @@
 #include <pthread.h>
 #include <string.h>
 #include "board.h"
-#include "boardHelper.h"
+#include "detector.h"
 
-int board[BOARD_SIZE][BOARD_SIZE];
-pthread_rwlock_t boardMutex;
-int currentPlayer;
-Pos historyStack[BOARD_SIZE * BOARD_SIZE + 10];
-int stackTop;
+static int board[BOARD_SIZE][BOARD_SIZE];
+static pthread_rwlock_t boardMutex;
+static int currentPlayer;
+static Pos historyStack[BOARD_SIZE * BOARD_SIZE + 10];
+static int stackTop;
 
-Pos directions[] = {{1, 0}, {1, 1}, {0, 1}, {-1, 1},
-                    {-1, 0}, {-1, -1}, {0, -1}, {1, -1}};
-
-const char *blackString = "black";
-const char *whiteString = "white";
-const char *empty = "empty";
+static const char *blackString = "black";
+static const char *whiteString = "white";
+static const char *empty = "empty";
 
 /**
  * Detect a pos is valid or not.
@@ -30,6 +27,8 @@ const char *empty = "empty";
 int isInvalidPos(Pos pos);
 
 const char *playerToStr(int player);
+
+int getChessHelper(Pos pos, void *param);
 
 Pos posAdd(Pos pos1, Pos pos2) {
   Pos result = {pos1.x + pos2.x, pos1.y + pos2.y};
@@ -55,7 +54,12 @@ int getChess(Pos pos) {
   return ret;
 }
 
-int getChessHelper(Pos pos, int _, va_list __) { return getChess(pos); }
+int getChessHelper(Pos pos, void *param) {
+  pthread_rwlock_rdlock(&boardMutex);
+  int ret = board[pos.x][pos.y] + 1;
+  pthread_rwlock_unlock(&boardMutex);
+  return ret;
+}
 
 int getPlayer() { return currentPlayer + 1; }
 
@@ -83,7 +87,7 @@ int putChess(Pos pos) {
     currentPlayer = !currentPlayer;
     historyStack[++stackTop] = pos;
     debug("A %s chess is put at position (%d, %d)", playerToStr(currentPlayer), pos.x, pos.y)
-    return isWin(getChessHelper, 0);
+    return isWin(getChessHelper, NULL);
   }
 }
 

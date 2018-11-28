@@ -11,12 +11,12 @@
 /**
  * Initialize the screen and request for game details.
  */
-void initScreen();
+void initScreen(void);
 
 /**
  * Clear the contents on the screen.
  */
-void clear();
+void clear(void);
 
 /**
  * The game loop
@@ -27,6 +27,6 @@ int loop(void *);
 /**
  * Reprint the screen.
  */
-void refresh();
+void refresh(void);
 
 #endif //GOMOKU_SCREEN_H

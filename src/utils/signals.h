@@ -8,7 +8,7 @@
 /**
  * @return 1 if sigint received.
  */
-int getIntSignal();
+int getIntSignal(void);
 
 /**
  * set the intSignal value.
@@ -18,16 +18,16 @@ void setIntSignal(int signal);
 /**
  * init signal handler module.
  */
-void initSignal();
+void initSignal(void);
 
 /**
  * The handler of sigint.
  */
-void sigintHandler(int num);
+void sigintHandler(int signal);
 
 /**
  * clean signal environment on exit.
  */
-void signalOnExit();
+void signalOnExit(void);
 
 #endif //GOMOKU_HELPER_H

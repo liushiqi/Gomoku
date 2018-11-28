@@ -10,16 +10,16 @@
 #include "utils/thread.h"
 #include "utils/signals.h"
 
-thrd_t game;
+static thrd_t game;
 
-int main() {
+int main(void) {
   setlocale(LC_ALL, "");
   int game_return_code;
   initSignal();
   initLogger();
   initScreen();
   initBoard();
-  info("game begin!");
+  info("game begin!")
   if (thrd_create(&game, loop, NULL) != thrd_success) {
     error("Thread create failed.")
     return 1;

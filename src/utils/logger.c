@@ -9,7 +9,7 @@
 
 log4c_category_t *category;
 
-static const char *detailedLayout(const log4c_layout_t *a_layout, const log4c_logging_event_t *a_event) {
+const char *detailedLayout(const log4c_layout_t *a_layout, const log4c_logging_event_t *a_event) {
   char time[1000] = {0};
   static char buffer[4096];
   strftime(time, 1000, "%F %T", localtime(&a_event->evt_timestamp.tv_sec));

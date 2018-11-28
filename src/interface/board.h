@@ -2,6 +2,8 @@
 // Created by liu on 18-10-13.
 //
 
+typedef int make_iso_compilers_happy_here;
+extern make_iso_compilers_happy_here makeIsoCompilersHappyHere;
 #ifndef GOMOKU_BOARD_H
 #define GOMOKU_BOARD_H
 
@@ -49,19 +51,18 @@ int getChess(Pos pos);
  * Get the current player to set chess.
  * @return 1 is black, 2 is white.
  */
-int getPlayer();
+int getPlayer(void);
 
 /**
  * Get the last pos chess putted.
  * @return The last pos.
  */
-Pos getLastPos();
+Pos getLastPos(void);
 
 /**
  * initialize the board.
- * @param initFunction the function run after initialization.
  */
-void initBoard();
+void initBoard(void);
 
 /**
  * Put a chess in the given position.
@@ -73,12 +74,12 @@ int putChess(Pos pos);
 /**
  * Skip the current player.
  */
-void skip();
+void skip(void);
 
 /**
  * Undo putting the last chess.
  * @return 0 if failed, otherwise 1.
  */
-int undo();
+int undo(void);
 
 #endif //GOMOKU_BOARD_H

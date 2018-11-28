@@ -8,8 +8,8 @@
 #include "utils/thread.h"
 #include "signals.h"
 
-int intSignal;
-pthread_rwlock_t intSignalMutex;
+static int intSignal;
+static pthread_rwlock_t intSignalMutex;
 
 int getIntSignal() {
   pthread_rwlock_rdlock(&intSignalMutex);
@@ -30,7 +30,7 @@ void initSignal() {
   pthread_rwlock_init(&intSignalMutex, NULL);
 }
 
-void sigintHandler(num) {
+void sigintHandler(int signal) {
   debug("sigint received.")
   pthread_rwlock_wrlock(&intSignalMutex);
   intSignal = 1;

@@ -9,7 +9,7 @@
     </config>
 
     <!-- category ====================================== -->
-    <category name="gomoku" priority="debug" appender="gomoku"/>
+    <category name="gomoku" priority="@log_priority@" appender="gomoku"/>
 
     <!-- appender ====================================== -->
 	<appender name="gomoku" type="rollingfile" logdir="./log" prefix="gomoku.log" layout="detailed" rollingpolicy="rollingpolicy" />
