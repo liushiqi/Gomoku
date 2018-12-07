@@ -7,33 +7,33 @@
 
 #include <wchar.h>
 
-extern const wchar_t *numberOfPlayersRequest;
+extern const wchar_t *const numberOfPlayersRequest;
 
-extern const wchar_t *typeOfChessRequest;
+extern const wchar_t *const typeOfChessRequest;
 
-extern const wchar_t *numberRequest;
+extern const wchar_t *const numberRequest;
 
-extern const wchar_t *header;
+extern const wchar_t *const header;
 
-extern const wchar_t *foot;
+extern const wchar_t *const foot;
 
-extern const wchar_t *direct;
+extern const wchar_t *const direct;
 
-extern const wchar_t *blackTerm;
+extern const wchar_t *const blackTerm;
 
-extern const wchar_t *blackWin;
+extern const wchar_t *const blackWin;
 
-extern const wchar_t *whiteTerm;
+extern const wchar_t *const whiteTerm;
 
-extern const wchar_t *whiteWin;
+extern const wchar_t *const whiteWin;
 
-extern const wchar_t *quit;
+extern const wchar_t *const quit;
 
-extern const wchar_t *wrongInput;
+extern const wchar_t *const wrongInput;
 
-extern const wchar_t *forbidden;
+extern const wchar_t *const forbidden;
 
-extern const wchar_t *oldest;
+extern const wchar_t *const oldest;
 
 extern const wchar_t black;
 extern const wchar_t lastBlack;
