@@ -12,7 +12,8 @@ set(SOURCES
         src/interface/detector.c
         src/utils/logger.cpp
         src/utils/values.c
-        src/utils/signals.c)
+        src/utils/signals.c
+        src/ai/ai.c)
 
 add_executable(gomoku ${SOURCES} src/main.c)
 target_include_directories(gomoku PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)

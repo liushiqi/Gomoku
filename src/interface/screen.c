@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
+#include <ai/ai.h>
 #include "screen.h"
 
 /** 0 if is single player, 1 if is multi player. */
@@ -183,8 +184,7 @@ int duUserInput() {
     }
     return -2;
   } else {
-    // TODO AI input
-    skip();
+    put_chess(get_ai_input());
     return 0;
   }
 }

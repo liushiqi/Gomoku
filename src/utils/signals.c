@@ -30,6 +30,7 @@ void set_sigint_status(int signal) {
 }
 
 void init_signal() {
+  pthread_rwlock_init(&sigint_mutex, NULL);
   struct sigaction action = {.sa_handler = sigint_handler};
   set_sigint_status(0);
   sigaction(SIGINT, &action, NULL);
