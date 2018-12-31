@@ -5,48 +5,61 @@
 #ifndef GOMOKU_VALUES_H
 #define GOMOKU_VALUES_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <wchar.h>
 
-extern const wchar_t *const numberOfPlayersRequest;
+// Request
+extern const wchar_t *const REQUEST_PLAYER_NUMBER;
 
-extern const wchar_t *const typeOfChessRequest;
+extern const wchar_t *const REQUEST_CHESS_TYPE;
 
-extern const wchar_t *const numberRequest;
+extern const wchar_t *const REQUEST_NUMBER;
 
-extern const wchar_t *const header;
+// Board
+extern const wchar_t *const BOARD_HEADER_LINES;
 
-extern const wchar_t *const foot;
+extern const wchar_t *const BOARD_FOOT_LINES;
 
-extern const wchar_t *const direct;
+extern const wchar_t *const INPUT_DIRECTION;
 
-extern const wchar_t *const blackTerm;
+// player help
+extern const wchar_t *const BLACK_TERM_MESSAGE;
 
-extern const wchar_t *const blackWin;
+extern const wchar_t *const BLACK_WIN_MESSAGE;
 
-extern const wchar_t *const whiteTerm;
+extern const wchar_t *const WHITE_TERM_MESSAGE;
 
-extern const wchar_t *const whiteWin;
+extern const wchar_t *const WHITE_WIN_MESSAGE;
 
-extern const wchar_t *const quit;
+extern const wchar_t *const QUIT_MESSAGE;
 
-extern const wchar_t *const wrongInput;
+// error
+extern const wchar_t *const WRONG_INPUT_ERROR;
 
-extern const wchar_t *const forbidden;
+extern const wchar_t *const FORBIDDEN_POS_ERROR;
 
-extern const wchar_t *const oldest;
+extern const wchar_t *const OLDEST_STATE_WARNING;
 
-extern const wchar_t black;
-extern const wchar_t lastBlack;
-extern const wchar_t white;
-extern const wchar_t lastWhite;
-extern const wchar_t leftTop;
-extern const wchar_t rightTop;
-extern const wchar_t leftGround;
-extern const wchar_t rightGround;
-extern const wchar_t top;
-extern const wchar_t ground;
-extern const wchar_t left;
-extern const wchar_t right;
-extern const wchar_t middle;
+// chess
+extern const char *RED_COLOR;
+extern const char *DEFAULT_COLOR;
+extern const wchar_t BLACK_CHESS;
+extern const wchar_t WHITE_CHESS;
+extern const wchar_t LEFT_TOP;
+extern const wchar_t RIGHT_TOP;
+extern const wchar_t LEFT_GROUND;
+extern const wchar_t RIGHT_GROUND;
+extern const wchar_t TOP_EDGE;
+extern const wchar_t GROUND_EDGE;
+extern const wchar_t LEFT_EDGE;
+extern const wchar_t RIGHT_EDGE;
+extern const wchar_t MIDDLE;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //GOMOKU_VALUES_H

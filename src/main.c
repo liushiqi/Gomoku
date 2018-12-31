@@ -7,29 +7,29 @@
 #include <interface/board.h>
 #include <interface/screen.h>
 #include <signal.h>
-#include "utils/thread.h"
+#include <pthread.h>
+#include <stdlib.h>
 #include "utils/signals.h"
 
-static thrd_t game;
+static pthread_t game;
 
 int main(void) {
   setlocale(LC_ALL, "");
-  int game_return_code;
-  initSignal();
-  initLogger();
-  initScreen();
-  initBoard();
-  info("game begin!")
-  if (thrd_create(&game, loop, NULL) != thrd_success) {
-    error("Thread create failed.")
+  sigset_t mask;
+  sigfillset(&mask);
+  pthread_sigmask(SIG_BLOCK, &mask, NULL);
+  init_logger();
+  init_signal();
+  init_screen();
+  init_board();
+  INFO(L"game begin!");
+  if (pthread_create(&game, NULL, &loop, NULL) != 0) {
+    ERROR(L"Thread create failed.");
     return 1;
   }
-  sigset_t mask;
-  sigaddset(&mask, SIGINT);
-  pthread_sigmask(SIG_BLOCK, &mask, NULL);
-  thrd_join(game, &game_return_code);
-  info("Game end.")
-  log4c_fini();
-  signalOnExit();
-  return game_return_code;
+  pthread_join(game, NULL);
+  INFO(L"Game end.");
+  fin_signal();
+  fin_logger();
+  return EXIT_SUCCESS;
 }

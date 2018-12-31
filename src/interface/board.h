@@ -1,20 +1,23 @@
 //
 // Created by liu on 18-10-13.
 //
+__attribute__((unused)) typedef int make_iso_compilers_happy_here;
 
-typedef int make_iso_compilers_happy_here;
-extern make_iso_compilers_happy_here makeIsoCompilersHappyHere;
 #ifndef GOMOKU_BOARD_H
 #define GOMOKU_BOARD_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define BOARD_SIZE 15
 
 /**
  * Indicate a point.
  */
-typedef struct PosStructure {
+typedef struct {
   int x, y;
-} Pos;
+} pos_t;
 
 /**
  * Add two pos together.
@@ -22,7 +25,7 @@ typedef struct PosStructure {
  * @param pos2 The second pos.
  * @return The added pos.
  */
-Pos posAdd(Pos pos1, Pos pos2);
+pos_t pos_add(pos_t pos1, pos_t pos2);
 
 /**
  * Subtract two pos.
@@ -30,7 +33,7 @@ Pos posAdd(Pos pos1, Pos pos2);
  * @param pos2 The subtrahend pos.
  * @return The subtracted pos.
  */
-Pos posSubtract(Pos pos1, Pos pos2);
+pos_t pos_sub(pos_t pos1, pos_t pos2);
 
 /**
  * Detect whether the given two pos are equal.
@@ -38,38 +41,38 @@ Pos posSubtract(Pos pos1, Pos pos2);
  * @param pos2 The second pos.
  * @return 0 if equal, otherwise 1.
  */
-int posCmp(Pos pos1, Pos pos2);
+int pos_cmp(pos_t pos1, pos_t pos2);
 
 /**
  * Get the chess in the given position.
  * @param pos the position to get;
- * @return 0 if no chess in this position, 1 is black, 2 is white.
+ * @return 0 if no chess in this position, 1 is black, 2 is white, -1 if invalid pos.
  */
-int getChess(Pos pos);
+int get_chess(pos_t pos);
 
 /**
  * Get the current player to set chess.
  * @return 1 is black, 2 is white.
  */
-int getPlayer(void);
+int get_player(void);
 
 /**
  * Get the last pos chess putted.
  * @return The last pos.
  */
-Pos getLastPos(void);
+pos_t get_last_pos(void);
 
 /**
  * initialize the board.
  */
-void initBoard(void);
+void init_board(void);
 
 /**
  * Put a chess in the given position.
  * @param pos the position to set chess
  * @return 0 if put succeed, 1 if black win, 2 if white win, -1 if is a forbidden place, -2 if it is invalid.
  */
-int putChess(Pos pos);
+int put_chess(pos_t pos);
 
 /**
  * Skip the current player.
@@ -81,5 +84,9 @@ void skip(void);
  * @return 0 if failed, otherwise 1.
  */
 int undo(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //GOMOKU_BOARD_H

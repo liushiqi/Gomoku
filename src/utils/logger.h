@@ -5,35 +5,41 @@
 #ifndef GOMOKU_LOGGER_H
 #define GOMOKU_LOGGER_H
 
-#include <log4c.h>
+#ifdef __cplusplus
+#define GOMOKU_EXTERN_C extern "C"
+#else // __cplusplus
+#define GOMOKU_EXTERN_C
+#endif
 
-void initLogger(void);
+#include <wchar.h>
+#include <wctype.h>
+#include <log4cplus/clogger.h>
 
-extern log4c_category_t *category;
+GOMOKU_EXTERN_C void init_logger(void);
 
-#define error(...) {\
-  const log4c_location_info_t locinfo = LOG4C_LOCATION_INFO_INITIALIZER(NULL);\
-  log4c_category_log_locinfo(category, &locinfo, LOG4C_PRIORITY_ERROR, __VA_ARGS__);\
-}
+GOMOKU_EXTERN_C void log_fmt(const char *file, int line, const char *func, log4cplus_loglevel_t ll,
+                             const log4cplus_char_t *fmt, ...);
 
-#define warn(...) {\
-  const log4c_location_info_t locinfo = LOG4C_LOCATION_INFO_INITIALIZER(NULL);\
-  log4c_category_log_locinfo(category, &locinfo, LOG4C_PRIORITY_WARN, __VA_ARGS__);\
-}
+GOMOKU_EXTERN_C void fin_logger(void);
 
-#define info(...) {\
-  const log4c_location_info_t locinfo = LOG4C_LOCATION_INFO_INITIALIZER(NULL);\
-  log4c_category_log_locinfo(category, &locinfo, LOG4C_PRIORITY_INFO, __VA_ARGS__);\
-}
+#define ERROR(...) do {\
+  log_fmt(__FILE__, __LINE__, __FUNCTION__, L4CP_ERROR_LOG_LEVEL, __VA_ARGS__);\
+} while(0)
 
-#define debug(...) {\
-  const log4c_location_info_t locinfo = LOG4C_LOCATION_INFO_INITIALIZER(NULL);\
-  log4c_category_log_locinfo(category, &locinfo, LOG4C_PRIORITY_DEBUG, __VA_ARGS__);\
-}
+#define WARN(...) do {\
+  log_fmt(__FILE__, __LINE__, __FUNCTION__, L4CP_WARN_LOG_LEVEL, __VA_ARGS__);\
+} while(0)
 
-#define trace(...) {\
-  const log4c_location_info_t locinfo = LOG4C_LOCATION_INFO_INITIALIZER(NULL);\
-  log4c_category_log_locinfo(category, &locinfo, LOG4C_PRIORITY_TRACE, __VA_ARGS__);\
-}
+#define INFO(...) do {\
+  log_fmt(__FILE__, __LINE__, __FUNCTION__, L4CP_INFO_LOG_LEVEL, __VA_ARGS__);\
+} while(0)
+
+#define DEBUG(...) do {\
+  log_fmt(__FILE__, __LINE__, __FUNCTION__, L4CP_DEBUG_LOG_LEVEL, __VA_ARGS__);\
+} while(0)
+
+#define TRACE(...) do {\
+  log_fmt(__FILE__, __LINE__, __FUNCTION__, L4CP_TRACE_LOG_LEVEL, __VA_ARGS__);\
+} while(0)
 
 #endif //GOMOKU_LOGGER_H

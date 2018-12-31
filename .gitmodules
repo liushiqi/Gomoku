@@ -1,9 +1,3 @@
-[submodule "tinycthread"]
-	path = lib/tinycthread
-	url = https://github.com/tinycthread/tinycthread.git
-[submodule "libexpat"]
-	path = lib/libexpat
-	url = https://github.com/libexpat/libexpat.git
-[submodule "log4c"]
-	path = lib/log4c
-	url = https://github.com/liushiqi/log4c.git
+[submodule "log4cplus"]
+	path = lib/log4cplus
+	url = https://github.com/log4cplus/log4cplus.git

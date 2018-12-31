@@ -2,41 +2,41 @@
 // Created by liu on 18-11-4.
 //
 
-#include <stdatomic.h>
 #include <signal.h>
-#include <utils/logger.h>
-#include "utils/thread.h"
+#include <pthread.h>
+#include <stdio.h>
 #include "signals.h"
+#include "logger.h"
 
-static int intSignal;
-static pthread_rwlock_t intSignalMutex;
+static int sigint_status;
+static pthread_rwlock_t sigint_mutex;
 
-int getIntSignal() {
-  pthread_rwlock_rdlock(&intSignalMutex);
-  int sig = intSignal;
-  pthread_rwlock_unlock(&intSignalMutex);
+/**
+ * The handler of sigint.
+ */
+void sigint_handler(int signal);
+
+int get_sigint_status() {
+  pthread_rwlock_rdlock(&sigint_mutex);
+  int sig = sigint_status;
+  pthread_rwlock_unlock(&sigint_mutex);
   return sig;
 }
 
-void setIntSignal(int signal) {
-  pthread_rwlock_wrlock(&intSignalMutex);
-  intSignal = signal;
-  pthread_rwlock_unlock(&intSignalMutex);
+void set_sigint_status(int signal) {
+  pthread_rwlock_wrlock(&sigint_mutex);
+  sigint_status = signal;
+  pthread_rwlock_unlock(&sigint_mutex);
 }
 
-void initSignal() {
-  struct sigaction intAction = {.sa_handler = sigintHandler};
-  sigaction(SIGINT, &intAction, 0);
-  pthread_rwlock_init(&intSignalMutex, NULL);
+void init_signal() {
+  struct sigaction action = {.sa_handler = sigint_handler};
+  set_sigint_status(0);
+  sigaction(SIGINT, &action, NULL);
 }
 
-void sigintHandler(int signal) {
-  debug("sigint received.")
-  pthread_rwlock_wrlock(&intSignalMutex);
-  intSignal = 1;
-  pthread_rwlock_unlock(&intSignalMutex);
+void sigint_handler(__attribute__((unused)) int signal) {
+  set_sigint_status(1);
 }
 
-void signalOnExit() {
-  pthread_rwlock_destroy(&intSignalMutex);
-}
+void fin_signal() {}

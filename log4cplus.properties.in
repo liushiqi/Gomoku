@@ -1,0 +1,11 @@
+log4cplus.rootLogger=@log_priority@, Gomoku
+
+log4cplus.appender.Gomoku=log4cplus::DailyRollingFileAppender
+log4cplus.appender.Gomoku.Schedule=DAILY
+log4cplus.appender.Gomoku.File=logs/Gomoku.log
+log4cplus.appender.Gomoku.CreateDirs=true
+log4cplus.appender.Gomoku.Append=true
+log4cplus.appender.Gomoku.MaxBackupIndex=100
+log4cplus.appender.Gomoku.MaxFileSize=100KB
+log4cplus.appender.Gomoku.layout=log4cplus::PatternLayout
+log4cplus.appender.Gomoku.layout.ConversionPattern=[%-5.5p] [%D{%Y-%m-%d %H:%M:%S,%Q}] %l - %m%n

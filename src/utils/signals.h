@@ -5,29 +5,32 @@
 #ifndef GOMOKU_HELPER_H
 #define GOMOKU_HELPER_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @return 1 if sigint received.
  */
-int getIntSignal(void);
+int get_sigint_status(void);
 
 /**
  * set the intSignal value.
  */
-void setIntSignal(int signal);
+void set_sigint_status(int signal);
 
 /**
  * init signal handler module.
  */
-void initSignal(void);
-
-/**
- * The handler of sigint.
- */
-void sigintHandler(int signal);
+void init_signal(void);
 
 /**
  * clean signal environment on exit.
  */
-void signalOnExit(void);
+void fin_signal(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //GOMOKU_HELPER_H
