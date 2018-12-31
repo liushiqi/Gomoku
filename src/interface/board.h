@@ -50,6 +50,8 @@ int pos_cmp(pos_t pos1, pos_t pos2);
  */
 int get_chess(pos_t pos);
 
+int get_chess_helper(pos_t pos, void *param);
+
 /**
  * Get the current player to set chess.
  * @return 1 is black, 2 is white.

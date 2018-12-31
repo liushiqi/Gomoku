@@ -39,7 +39,7 @@ int requestLine(const wchar_t *request, wchar_t *value, int count);
 
 /**
  * Get the input from either standard input or the AI calc result and put a chess.
- * @return 0 if succeed, 1 if black win, 2 if white win, -1 if interrupted.
+ * @return 0 if succeed, 1 if black win, 2 if white win, -1 if interrupted, -2 if fatal error.
  */
 int duUserInput(void);
 
@@ -145,7 +145,7 @@ int duUserInput() {
   if (game_type || get_player() == player) {
     int error_code;
     wprintf(INPUT_DIRECTION);
-    while ((error_code = requestLine(player - 1 ? BLACK_TERM_MESSAGE : WHITE_TERM_MESSAGE, line, 1000)) > -1) {
+    while ((error_code = requestLine(get_player() - 1 ? WHITE_TERM_MESSAGE : BLACK_TERM_MESSAGE, line, 1000)) > -1) {
       if (error_code == 0) {
         WARN(L"Exited unexpectedly.");
         return -1;
@@ -156,6 +156,9 @@ int duUserInput() {
         if (undo()) return 0;
         else wprintf(OLDEST_STATE_WARNING);
         continue;
+      } else if (!wcscmp(line, L"skip")) {
+        skip();
+        return 0;
       } else if (iswalpha((wint_t) line[0])) {
         wchar_t *ptr;
         pos.y = (wchar_t) towlower((wint_t) line[0]) - 'a';
@@ -179,13 +182,18 @@ int duUserInput() {
         case -2:wprintf(WRONG_INPUT_ERROR);
           continue;
         default: ERROR(L"This should not happen!");
-          break;
+          return -2;
       }
     }
     return -2;
   } else {
-    put_chess(get_ai_input());
-    return 0;
+    switch (put_chess(get_ai_input())) {
+      case 0:return 0;
+      case 1: return 1;
+      case 2:return 2;
+      default:ERROR(L"This should not happen!");
+        return -2;
+    }
   }
 }
 

@@ -4,9 +4,9 @@
 
 #include "ai.h"
 #include <pthread.h>
-#include <interface/board.h>
 #include <stdlib.h>
 #include <utils/logger.h>
+#include <interface/detector.h>
 
 pthread_t ai_thread;
 
@@ -52,11 +52,11 @@ void *ai_loop(__attribute__((unused)) void *param) {
       break;
     } else {
       struct timespec delay;
-      delay.tv_sec = 1;
-      delay.tv_nsec = 0;
+      delay.tv_sec = 0;
+      delay.tv_nsec = 1000000;
       nanosleep(&delay, &delay);
       pos_t pos = {(int) (random() % BOARD_SIZE), (int) (random() % BOARD_SIZE)};
-      if (get_chess(pos) != 0) {
+      while (get_chess(pos) != 0 || is_forbidden(pos, get_player(), get_chess_helper, NULL, 0)) {
         pos.x = (int) (random() % BOARD_SIZE);
         pos.y = (int) (random() % BOARD_SIZE);
       }
