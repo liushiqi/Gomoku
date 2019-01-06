@@ -11,7 +11,6 @@
 typedef struct search_node {
   int dist;
   int depth;
-  int child_succeed;
   pthread_mutex_t lock;
   int searched;
   pos_t pos;

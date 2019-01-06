@@ -98,7 +98,7 @@ typedef struct {
 } return_value_t;
 
 return_value_t get_best_pos(search_node_t *node) {
-  if (node->child == NULL || node->child_succeed == 0) {
+  if (node->child == NULL) {
     return_value_t max = {node->pos, node->value};
     return max;
   }
@@ -133,7 +133,6 @@ int pos_search_valid(pos_t pos, int (*get_chess_func)(pos_t, void *), void *para
 int new_child(search_node_t *node) {
   search_node_t *new_child = (search_node_t *) malloc(sizeof(search_node_t));
   new_child->parent = node;
-  new_child->child_succeed = 0;
   new_child->depth = new_child->parent->depth + 1;
   new_child->player = (node->player == 1) ? 2 : 1;
   new_child->child = NULL;
@@ -172,7 +171,6 @@ int new_child(search_node_t *node) {
 int new_next_node(int k) {
   search_node_t *new_node = (search_node_t *) malloc(sizeof(search_node_t));
   new_node->parent = searching_node->parent;
-  new_node->child_succeed = 0;
   new_node->depth = new_node->parent->depth + 1;
   new_node->player = searching_node->player;
   new_node->child = NULL;
@@ -197,7 +195,6 @@ int next_searching_node(void) {
     return new_child(child);
   } else if (search_pos.x == BOARD_SIZE - 1) {
     if (search_pos.y == BOARD_SIZE - 1) {
-      if (searching_node->child != NULL) searching_node->child_succeed = 1;
       searching_node = searching_node->parent;
       search_pos = searching_node->pos;
       return next_searching_node();
@@ -210,7 +207,6 @@ int next_searching_node(void) {
   }
   if (searching_node->next != NULL) {
     searching_node = searching_node->next;
-    searching_node->prev->child_succeed = 1;
     return new_child(searching_node);
   } else if (searching_node->prev == NULL || searching_node->prev->child == NULL) {
     int k =
@@ -219,7 +215,6 @@ int next_searching_node(void) {
       return new_next_node(k);
     else return 0;
   } else {
-    searching_node->prev->child_succeed = 1;
     return new_child(searching_node);
   }
 }
@@ -271,7 +266,6 @@ void *search_loop(__attribute__((unused)) void *param) {
           if (node->next == NULL) {
             search_node_t *new_node = (search_node_t *) malloc(sizeof(search_node_t));
             new_node->parent = node->parent;
-            new_node->child_succeed = 0;
             new_node->depth = new_node->parent->depth + 1;
             new_node->player = node->player;
             new_node->child = NULL;
@@ -279,7 +273,6 @@ void *search_loop(__attribute__((unused)) void *param) {
             new_node->dist = 1;
             new_node->prev = node;
             new_node->get_chess_func = get_chess_helper;
-            new_node->child_succeed = 0;
             new_node->pos = search_pos;
             new_node->searched = 0;
             pthread_mutex_init(&new_node->lock, NULL);
@@ -336,7 +329,6 @@ void init_searching(int player) {
   pthread_cond_init(&result_cond, NULL);
   pthread_mutex_init(&result_mutex, NULL);
   root.player = player;
-  root.child_succeed = 1;
   root.depth = 1;
   root.parent = NULL;
   root.next = NULL;
