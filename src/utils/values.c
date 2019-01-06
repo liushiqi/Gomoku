@@ -20,6 +20,8 @@ const wchar_t *const BOARD_FOOT_LINES = L"    A B C D E F G H I J K L M N O\n";
 
 const wchar_t *const INPUT_DIRECTION = L"使用字母+数字的形式输入，如A1或a1，quit或Ctrl+D以退出。\n";
 
+const wchar_t *const LAST_POS_MESSAGE = L"最后一个落子点：";
+
 const wchar_t *const BLACK_TERM_MESSAGE = L"请黑棋下子：";
 
 const wchar_t *const BLACK_WIN_MESSAGE = L"黑棋胜！！！";

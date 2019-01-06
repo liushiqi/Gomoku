@@ -7,10 +7,10 @@
 
 #include <interface/board.h>
 
-void init_ai(void);
+void init_ai(int player);
 
 pos_t get_ai_input(void);
 
 void fin_ai(void);
 
-#endif //GOMOKU_AI_H
+#endif // GOMOKU_AI_H

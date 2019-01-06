@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 3.12)
 project(gomoku)
 
-cmake_policy(SET CMP0077 NEW)
-
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
+
+if (WIN32)
+    message(FATAL_ERROR "Could Not Compile in Windows! Linux is allowed.")
+endif ()
 
 set(SOURCES
         src/interface/board.c
@@ -13,7 +15,8 @@ set(SOURCES
         src/utils/logger.cpp
         src/utils/values.c
         src/utils/signals.c
-        src/ai/ai.c)
+        src/ai/ai.c src/ai/evaluate.c
+        src/ai/search.c)
 
 add_executable(gomoku ${SOURCES} src/main.c)
 target_include_directories(gomoku PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)

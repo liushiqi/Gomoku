@@ -34,10 +34,26 @@ int forbidden_board[9][9] = {{0, 0, 2, 0, 0, 0, 2, 0, 0},
                              {0, 0, 0, 0, 0, 0, 0, 0, 0},
                              {0, 0, 0, 0, 0, 0, 0, 0, 0}};
 
+int forbidden_board2[9][9] = {{0, 0, 0, 0, 0, 0, 0, 0, 0},
+                              {0, 0, 1, 2, 0, 0, 0, 0, 0},
+                              {0, 1, 0, 0, 1, 0, 0, 0, 0},
+                              {0, 2, 1, 2, 1, 2, 1, 0, 0},
+                              {0, 1, 0, 2, 0, 0, 0, 1, 0},
+                              {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                              {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                              {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                              {0, 0, 0, 0, 0, 0, 0, 0, 0}};
+
 int forbidden_get_chess_func(pos_t pos, __attribute__((unused)) void *param) {
   if (pos.x > 8 || pos.y > 8 || pos.x < 0 || pos.y < 0)
     return -1;
   return forbidden_board[pos.x][pos.y];
+}
+
+int forbidden_get_chess_func2(pos_t pos, __attribute__((unused)) void *param) {
+  if (pos.x > 8 || pos.y > 8 || pos.x < 0 || pos.y < 0)
+    return -1;
+  return forbidden_board2[pos.x][pos.y];
 }
 
 BOOST_AUTO_TEST_SUITE(forbidden)
@@ -60,6 +76,9 @@ BOOST_AUTO_TEST_CASE(forbidden) {
   BOOST_CHECK_EQUAL(is_forbidden({4, 6}, 1, forbidden_get_chess_func, nullptr, 0), 1);
   BOOST_CHECK_EQUAL(is_forbidden({3, 7}, 1, forbidden_get_chess_func, nullptr, 0), 1);
   BOOST_CHECK_EQUAL(is_forbidden({1, 7}, 1, forbidden_get_chess_func, nullptr, 0), 0);
+  BOOST_CHECK_EQUAL(is_forbidden({2, 2}, 1, forbidden_get_chess_func2, nullptr, 0), 0);
+  BOOST_CHECK_EQUAL(is_forbidden({2, 3}, 1, forbidden_get_chess_func2, nullptr, 0), 1);
+  BOOST_CHECK_EQUAL(is_forbidden({1, 4}, 1, forbidden_get_chess_func2, nullptr, 0), 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

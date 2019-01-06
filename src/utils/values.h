@@ -25,6 +25,8 @@ extern const wchar_t *const BOARD_FOOT_LINES;
 
 extern const wchar_t *const INPUT_DIRECTION;
 
+extern const wchar_t *const LAST_POS_MESSAGE;
+
 // player help
 extern const wchar_t *const BLACK_TERM_MESSAGE;
 

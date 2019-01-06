@@ -26,7 +26,7 @@ static int player;
  * @param value The value to receive.
  * @return 1 if read successfully, 0 if eof met.
  */
-int requestInt(const wchar_t *request, int *value);
+int request_int(const wchar_t *request, int *value);
 
 /**
  * Request a wide string for the given request from standard input.
@@ -35,18 +35,18 @@ int requestInt(const wchar_t *request, int *value);
  * @param count The max length of a line.
  * @return 1 if read successfully, 0 if eof met.
  */
-int requestLine(const wchar_t *request, wchar_t *value, int count);
+int request_line(const wchar_t *request, wchar_t *value, int count);
 
 /**
  * Get the input from either standard input or the AI calc result and put a chess.
  * @return 0 if succeed, 1 if black win, 2 if white win, -1 if interrupted, -2 if fatal error.
  */
-int duUserInput(void);
+int do_user_input(void);
 
 void init_screen(void) {
   clear();
   wprintf(REQUEST_PLAYER_NUMBER);
-  while (requestInt(REQUEST_NUMBER, &game_type) && game_type != 1 && game_type != 2) {
+  while (request_int(REQUEST_NUMBER, &game_type) && game_type != 1 && game_type != 2) {
     WARN(L"Wrong input: %d", game_type);
     wprintf(WRONG_INPUT_ERROR);
   }
@@ -58,7 +58,7 @@ void init_screen(void) {
   INFO(L"Game mode is %ls player.", game_type ? L"multi" : L"single");
   if (!game_type) {
     wprintf(REQUEST_CHESS_TYPE);
-    while (requestInt(REQUEST_NUMBER, &player) && (player != 1 && player != 2)) {
+    while (request_int(REQUEST_NUMBER, &player) && (player != 1 && player != 2)) {
       WARN(L"Wrong input %d", game_type);
       wprintf(WRONG_INPUT_ERROR);
     }
@@ -66,7 +66,8 @@ void init_screen(void) {
       WARN(L"Exited unexpectedly.");
       exit(0);
     }
-    INFO(L"player chose %s.", player - 1 ? "black" : "white");
+    INFO(L"player chose %s.", player - 1 ? "white" : "black");
+    init_ai(player == 1 ? 2 : 1);
   }
   INFO(L"Screen initialized.");
 }
@@ -106,6 +107,9 @@ void refresh() {
     putwchar('\n');
   }
   wprintf(BOARD_FOOT_LINES);
+  pos_t last = get_last_pos();
+  if (last.x == -1) { /* EMPTY */ }
+  else wprintf(L"%ls %c%d\n", LAST_POS_MESSAGE, last.y + 'A', last.x + 1);
 }
 
 void *loop(__attribute__((unused)) void *ptr) {
@@ -115,7 +119,7 @@ void *loop(__attribute__((unused)) void *ptr) {
   while (1) {
     int result;
     refresh();
-    result = duUserInput();
+    result = do_user_input();
     switch (result) {
       case 0:continue;
       case 1: INFO(L"Black win!!!");
@@ -139,13 +143,13 @@ void clear() {
   wprintf(L"\033c");
 }
 
-int duUserInput() {
+int do_user_input() {
   wchar_t line[1000];
   pos_t pos = {-1, -1};
   if (game_type || get_player() == player) {
     int error_code;
     wprintf(INPUT_DIRECTION);
-    while ((error_code = requestLine(get_player() - 1 ? WHITE_TERM_MESSAGE : BLACK_TERM_MESSAGE, line, 1000)) > -1) {
+    while ((error_code = request_line(get_player() - 1 ? WHITE_TERM_MESSAGE : BLACK_TERM_MESSAGE, line, 1000)) > -1) {
       if (error_code == 0) {
         WARN(L"Exited unexpectedly.");
         return -1;
@@ -197,9 +201,9 @@ int duUserInput() {
   }
 }
 
-int requestInt(const wchar_t *request, int *value) {
+int request_int(const wchar_t *request, int *value) {
   wchar_t line[1000];
-  while (requestLine(request, line, 1000) && !iswdigit((wint_t) line[0])) {
+  while (request_line(request, line, 1000) && !iswdigit((wint_t) line[0])) {
     WARN(L"Wrong input %ls", line);
     wprintf(WRONG_INPUT_ERROR);
   }
@@ -211,13 +215,13 @@ int requestInt(const wchar_t *request, int *value) {
   return 1;
 }
 
-int requestLine(const wchar_t *request, wchar_t *value, int count) {
+int request_line(const wchar_t *request, wchar_t *value, int count) {
   wprintf(request);
   if (fgetws(value, count, stdin) == NULL) {
     if (get_sigint_status()) {
       set_sigint_status(0);
       wprintf(L"\n");
-      return requestLine(request, value, count);
+      return request_line(request, value, count);
     } else if (feof(stdin))
       return 0;
   } else {

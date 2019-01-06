@@ -3,17 +3,16 @@
 //
 
 #include "ai.h"
+#include "search.h"
 #include <pthread.h>
 #include <stdlib.h>
 #include <utils/logger.h>
-#include <interface/detector.h>
 
-pthread_t ai_thread;
+static pthread_t ai_thread;
 
-enum INT_TYPE {
-  CALC, QUIT
-} int_type;
-pthread_rwlock_t type_lock;
+typedef enum { CALC, QUIT } int_type_t;
+static int_type_t int_type;
+static pthread_rwlock_t type_lock;
 
 static pos_t result;
 static pthread_cond_t result_cond;
@@ -22,21 +21,20 @@ static pthread_mutex_t result_mutex;
 static pthread_cond_t interrupt_sleep;
 static pthread_mutex_t interrupt_mutex;
 
-void set_int_type(enum INT_TYPE type) {
+void set_int_type(int_type_t type) {
   pthread_rwlock_wrlock(&type_lock);
   int_type = type;
   pthread_rwlock_unlock(&type_lock);
 }
 
-enum INT_TYPE get_int_type() {
+int_type_t get_int_type() {
   pthread_rwlock_rdlock(&type_lock);
-  enum INT_TYPE sig = int_type;
+  int_type_t sig = int_type;
   pthread_rwlock_unlock(&type_lock);
   return sig;
 }
 
-void set_pos(int x, int y) {
-  pos_t pos = {.x = x, .y = y};
+void set_pos(pos_t pos) {
   result = pos;
 }
 
@@ -49,33 +47,33 @@ void *ai_loop(__attribute__((unused)) void *param) {
   while (1) {
     pthread_cond_wait(&interrupt_sleep, &interrupt_mutex);
     if (get_int_type() == QUIT) {
+      stop_searching();
       break;
     } else {
+      start_searching(get_last_pos());
       struct timespec delay;
-      delay.tv_sec = 0;
-      delay.tv_nsec = 1000000;
+      delay.tv_sec = 14;
+      delay.tv_nsec = 0;
       nanosleep(&delay, &delay);
-      pos_t pos = {(int) (random() % BOARD_SIZE), (int) (random() % BOARD_SIZE)};
-      while (get_chess(pos) != 0 || is_forbidden(pos, get_player(), get_chess_helper, NULL, 0)) {
-        pos.x = (int) (random() % BOARD_SIZE);
-        pos.y = (int) (random() % BOARD_SIZE);
-      }
+      pos_t pos = collect_value();
       pthread_mutex_lock(&result_mutex);
       pthread_cond_signal(&result_cond);
-      set_pos(pos.x, pos.y);
+      set_pos(pos);
       pthread_mutex_unlock(&result_mutex);
     }
   }
   return NULL;
 }
 
-void init_ai(void) {
+void init_ai(int player) {
+  init_searching(player);
   pthread_cond_init(&interrupt_sleep, NULL);
   pthread_cond_init(&result_cond, NULL);
   pthread_rwlock_init(&type_lock, NULL);
   pthread_mutex_init(&interrupt_mutex, NULL);
   pthread_mutex_init(&result_mutex, NULL);
-  set_pos(-1, -1);
+  pos_t pos = {-1, -1};
+  set_pos(pos);
   pthread_create(&ai_thread, NULL, ai_loop, NULL);
   DEBUG(L"AI init succeed.");
 }

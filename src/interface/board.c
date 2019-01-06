@@ -18,13 +18,6 @@ static const wchar_t *black_string = L"black";
 static const wchar_t *white_string = L"white";
 static const wchar_t *empty = L"empty";
 
-/**
- * Detect a pos is valid or not.
- * @param pos The pos to detect.
- * @return 1 if invalid, 0 if valid.
- */
-int is_invalid_pos(pos_t pos);
-
 const wchar_t *player_to_str(int player);
 
 pos_t pos_add(pos_t pos1, pos_t pos2) {
@@ -64,7 +57,8 @@ int get_chess_helper(pos_t pos, __attribute__((unused)) void *param) {
 
 int get_player() { return current_player + 1; }
 
-pos_t get_last_pos() { return history_stack[stack_top]; }
+pos_t temp_pos = {-1, -1};
+pos_t get_last_pos() { if (stack_top == -1) return temp_pos; else return history_stack[stack_top]; }
 
 void init_board() {
   memset(search_board, -1, sizeof(search_board));
@@ -97,7 +91,7 @@ int put_chess(pos_t pos) {
 }
 
 int is_invalid_pos(pos_t pos) {
-  return pos.x < 0 || pos.x > BOARD_SIZE || pos.y < 0 || pos.y > BOARD_SIZE;
+  return pos.x < 0 || pos.x >= BOARD_SIZE || pos.y < 0 || pos.y >= BOARD_SIZE;
 }
 
 void skip() {

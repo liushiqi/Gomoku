@@ -4,21 +4,12 @@
 
 #include "detector.h"
 
-typedef struct sst {
+typedef struct {
   pos_t pos;
   int chess;
   void *param;
   int (*get_chess_func)(pos_t, void *);
 } search_stack_t;
-
-static pos_t dirs[8] = {{1, 0},
-                        {1, 1},
-                        {0, 1},
-                        {-1, 1},
-                        {-1, 0},
-                        {-1, -1},
-                        {0, -1},
-                        {1, -1}};
 
 int get_chess_from_stack(pos_t pos, void *param) {
   search_stack_t *stack = (search_stack_t *) param;
@@ -49,7 +40,8 @@ int search_chess_one_dir(pos_t point, pos_t direction, int (*get_chess_func)(pos
             --last_zero1;
             ++impl_link;
             if (space == 0) ++space;
-          } else if (chess_now == 0 && last_zero1 == 0) {
+          } else if (chess_now == 0 && check_available(cur, current, get_chess_func, param, depth + 1)
+              && last_zero1 == 0) {
             ++last_zero1;
             break;
           } else {
@@ -78,7 +70,8 @@ int search_chess_one_dir(pos_t point, pos_t direction, int (*get_chess_func)(pos
             --last_zero2;
             ++impl_link;
             if (space == 0) ++space;
-          } else if (chess_now == 0 && last_zero2 == 0) {
+          } else if (chess_now == 0 && check_available(cur, current, get_chess_func, param, depth + 1)
+              && last_zero2 == 0) {
             ++last_zero2;
             break;
           } else break;
@@ -145,7 +138,7 @@ int is_forbidden(pos_t pos, int player, int (*get_chess_func)(pos_t, void *), vo
         default:break;
       }
     }
-    if (double_three == 4 || double_four == 4) return 1;
+    if (double_three >= 4 || double_four >= 4) return 1;
   }
   return 0;
 }

@@ -44,6 +44,13 @@ pos_t pos_sub(pos_t pos1, pos_t pos2);
 int pos_cmp(pos_t pos1, pos_t pos2);
 
 /**
+ * Detect a pos is valid or not.
+ * @param pos The pos to detect.
+ * @return 1 if invalid, 0 if valid.
+ */
+int is_invalid_pos(pos_t pos);
+
+/**
  * Get the chess in the given position.
  * @param pos the position to get;
  * @return 0 if no chess in this position, 1 is black, 2 is white, -1 if invalid pos.

@@ -22,7 +22,6 @@ int main(void) {
   pthread_sigmask(SIG_BLOCK, &mask, NULL);
   init_logger();
   init_signal();
-  init_ai();
   init_screen();
   init_board();
   INFO(L"game begin!");
