@@ -30,6 +30,7 @@ GOMOKU_EXTERN_C void fin_logger(void);
   log_fmt(__FILE__, __LINE__, __FUNCTION__, L4CP_WARN_LOG_LEVEL, __VA_ARGS__);\
 } while(0)
 
+#ifndef RELEASE
 #define INFO(...) do {\
   log_fmt(__FILE__, __LINE__, __FUNCTION__, L4CP_INFO_LOG_LEVEL, __VA_ARGS__);\
 } while(0)
@@ -41,5 +42,11 @@ GOMOKU_EXTERN_C void fin_logger(void);
 #define TRACE(...) do {\
   log_fmt(__FILE__, __LINE__, __FUNCTION__, L4CP_TRACE_LOG_LEVEL, __VA_ARGS__);\
 } while(0)
+#else
+#define INFO(...)
 
+#define DEBUG(...)
+
+#define TRACE(...)
+#endif
 #endif //GOMOKU_LOGGER_H

@@ -34,6 +34,7 @@ set_property(TARGET gomoku PROPERTY C_STANDARD 11)
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     set(log_priority DEBUG)
 elseif (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    target_compile_definitions(gomoku PRIVATE RELEASE)
     set(log_priority ERROR)
 endif ()
 
