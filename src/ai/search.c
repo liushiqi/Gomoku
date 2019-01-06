@@ -37,19 +37,6 @@ stop_type_t get_stop_type(void) {
 }
 
 /**
- * search thread.
- */
-struct search_thread_t {
-  search_node_t root;
-  pthread_t search_thread;
-  search_node_t *searching_node;
-  search_node_t *search_root;
-  pos_t search_pos;
-  stop_type_t stop_type;
-  pthread_rwlock_t type_lock;
-};
-
-/**
  * The part of last position
  */
 static pos_t last_position;
@@ -319,8 +306,6 @@ void *search_loop(__attribute__((unused)) void *param) {
     }
   }
 }
-
-void *loop_game(__attribute__((unused)) void *param) {}
 
 void init_searching(int player) {
   computer_player = player;
